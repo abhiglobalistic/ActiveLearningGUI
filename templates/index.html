@@ -1,0 +1,170 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Active Learning</title>
+
+      <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">-->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/customstyle.css') }}">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/callbacks/controller.js') }}"></script>
+
+  </head>
+  <body onload="onBoot()">
+
+
+<div class="container">
+    <div class="jumbotron" style="padding:18px">
+    <h2 style="text-align:center">Active learning for gender classification using audio</h2>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <fieldset class="fieldset" style="padding:6px">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#Log_Reg">Log_Reg Samples</a></li>
+                    <li><a data-toggle="tab" href="#SVM">SVM Samples</a></li>
+                    <li><a data-toggle="tab" href="#RFC">RFC Samples</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="Log_Reg" class="tab-pane fade in active">
+                      <div class="active-tableDiv">
+                          <table class="table" >
+                               <thead>
+                                <tr>
+                                  <th scope="col">Audio Clip</th>
+                                  <th scope="col">Label</th>
+                                </tr>
+                              </thead>
+                              <tbody id="logReg_table">
+                              {% for sample in logRegSamples %}
+                                <tr>
+                                    <td><audio title="{{ sample['name'] }}" src="{{ sample['clip'] }}" controls> </audio></td>
+                                    <td>
+                                        <select class="form-control" selected="Female">
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                      </div>
+                    </div>
+                    <div id="SVM" class="tab-pane fade">
+                         <div class="active-tableDiv">
+                          <table class="table" >
+                               <thead>
+                                <tr>
+                                  <th scope="col">Audio Clip</th>
+                                  <th scope="col">Label</th>
+                                </tr>
+                              </thead>
+                              <tbody id="svm_table">
+                              {% for sample in svmSamples %}
+                                <tr>
+                                    <td><audio title="{{ sample['name'] }}" src="{{ sample['clip'] }}" controls> </audio></td>
+                                    <td>
+                                        <select class="form-control" selected="Female">
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                      </div>
+                    </div>
+                    <div id="RFC" class="tab-pane fade">
+                         <div class="active-tableDiv">
+                          <table class="table" >
+                               <thead>
+                                <tr>
+                                  <th scope="col">Audio Clip</th>
+                                  <th scope="col">Label</th>
+                                </tr>
+                              </thead>
+                              <tbody id="rfc_table">
+                              {% for sample in rfSamples %}
+                                <tr>
+                                    <td><audio title="{{ sample['name'] }}" src="{{ sample['clip'] }}" controls> </audio></td>
+                                    <td>
+                                        <select class="form-control" selected="female">
+                                                <option>male</option>
+                                                <option>female</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                      </div>
+
+                    </div>
+
+                    <div  id="getSamples-button">
+                         <button id='getButton' onclick="getSamples_toAnnotate()" class="btn btn-success" name="train">Get Samples to Annotate</button>
+                    </div>
+
+                    <div  id="submit-button">
+                        <button id='subButton' onclick="send_AnnotatedSamples()" class="btn btn-success" name="train">Submit Labels</button>
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+        </div>
+
+        <div class="col-md-6">
+         <fieldset class="fieldset">
+             <div >
+                 <table class="table" >
+                     <thead>
+                            <tr >
+                                <th scope="col" id="stats">
+                                    <h4>Statistics</h4>
+                                </th>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                                 <td><div id="chart" class="chart"/></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                  </div>
+
+
+         </fieldset>
+        </div>
+
+</div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script>window.jQuery || document.write('<script src="/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script><script href="{{ url_for('static',filename='js/bootstrap.bundle.min.js') }}" ></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    localStorage.setItem('stepSampleCount',20)
+</script>
+
+
+  </body>
+</html>
